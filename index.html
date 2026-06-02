@@ -9,44 +9,47 @@
 
 <style>
 
+/* ===== BASE ===== */
 body{
 margin:0;
 font-family:'Cormorant Garamond', serif;
-background:#f5f0e6;
-overflow-x:hidden;
+background:#f6f1e7;
 color:#7a6a4f;
+overflow-x:hidden;
 }
 
-/* ✉️ ENVELOPE INTRO */
-.envelope{
+/* ===== OVERLAY INTRO (CINEMATIC) ===== */
+.overlay{
 position:fixed;
 inset:0;
-background:#f5f0e6;
+background:radial-gradient(circle,#fff,#f3eadc);
 display:flex;
 flex-direction:column;
 align-items:center;
 justify-content:center;
 z-index:999;
+text-align:center;
 }
 
-.envelope h1{
+.overlay h1{
 font-family:'Great Vibes';
-font-size:4rem;
+font-size:4.5rem;
 color:#b79a5b;
+animation:fadeIn 2s ease;
 }
 
-.openBtn{
+.overlay button{
 padding:14px 30px;
+border:none;
 background:#b79a5b;
 color:white;
-border:none;
 border-radius:12px;
 font-size:16px;
-margin-top:20px;
 cursor:pointer;
+margin-top:20px;
 }
 
-/* HERO */
+/* ===== HERO ===== */
 .hero{
 display:none;
 height:100vh;
@@ -61,16 +64,16 @@ position:relative;
 content:'';
 position:absolute;
 inset:0;
-background:rgba(255,255,255,0.4);
+background:rgba(255,255,255,0.35);
 }
 
 .hero-content{
 position:relative;
 z-index:2;
-animation:zoomIn 2s ease;
+animation:zoom 2s ease;
 }
 
-@keyframes zoomIn{
+@keyframes zoom{
 from{transform:scale(1.1);opacity:0;}
 to{transform:scale(1);opacity:1;}
 }
@@ -82,44 +85,43 @@ color:#b79a5b;
 margin:0;
 }
 
-/* GLASS COUNTDOWN */
-.glass{
+/* ===== COUNTDOWN GLASS ===== */
+.countdown{
 display:flex;
 gap:10px;
 justify-content:center;
-margin-top:20px;
 flex-wrap:wrap;
+margin-top:15px;
 }
 
-.glass div{
-backdrop-filter:blur(10px);
+.countdown div{
+backdrop-filter:blur(12px);
 background:rgba(255,255,255,0.6);
 padding:12px;
 border-radius:15px;
-min-width:70px;
-box-shadow:0 10px 25px rgba(0,0,0,0.1);
+min-width:75px;
+box-shadow:0 10px 25px rgba(0,0,0,0.08);
 }
 
-.glass span{
+.countdown span{
 display:block;
 font-size:1.6rem;
 color:#b79a5b;
 }
 
-/* SECTIONS */
+/* ===== SECTIONS ===== */
 section{
 padding:70px 20px;
 text-align:center;
 }
 
-/* TITLE */
 .title{
 font-family:'Great Vibes';
 font-size:3rem;
 color:#b79a5b;
 }
 
-/* GALLERY SWIPE */
+/* ===== GALLERY LIGHTBOX ===== */
 .gallery{
 display:flex;
 overflow-x:auto;
@@ -134,19 +136,37 @@ height:350px;
 object-fit:cover;
 border-radius:18px;
 scroll-snap-align:center;
+cursor:pointer;
 }
 
-/* CARD */
+/* LIGHTBOX */
+.lightbox{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.85);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:1000;
+}
+
+.lightbox img{
+max-width:90%;
+max-height:80%;
+border-radius:15px;
+}
+
+/* ===== CARDS ===== */
 .card{
 background:white;
 padding:20px;
 border-radius:20px;
-max-width:500px;
+max-width:520px;
 margin:auto;
 box-shadow:0 15px 35px rgba(0,0,0,0.08);
 }
 
-/* BUTTONS */
+/* ===== BUTTONS ===== */
 .btn{
 display:inline-block;
 margin-top:15px;
@@ -157,21 +177,7 @@ border-radius:10px;
 text-decoration:none;
 }
 
-/* PETALS */
-.petal{
-position:fixed;
-top:-10px;
-color:#e7d3a8;
-animation:fall linear infinite;
-}
-
-@keyframes fall{
-to{
-transform:translateY(110vh) rotate(360deg);
-}
-}
-
-/* MUSIC */
+/* ===== MUSIC ===== */
 #musicBtn{
 position:fixed;
 bottom:20px;
@@ -182,6 +188,25 @@ color:white;
 padding:15px;
 border-radius:50%;
 display:none;
+z-index:999;
+}
+
+/* ===== PARTICLES ===== */
+.petal{
+position:fixed;
+top:-10px;
+color:#e7d3a8;
+animation:fall linear infinite;
+opacity:0.7;
+}
+
+@keyframes fall{
+to{transform:translateY(110vh) rotate(360deg);}
+}
+
+@keyframes fadeIn{
+from{opacity:0;}
+to{opacity:1;}
 }
 
 </style>
@@ -189,24 +214,22 @@ display:none;
 
 <body>
 
-<!-- ENVELOPE -->
-<div class="envelope" id="envelope">
+<!-- OVERLAY -->
+<div class="overlay" id="overlay">
 <h1>Aisha Ailany</h1>
-<p>Has sido invitado a su bautizo</p>
-<button class="openBtn" onclick="openInvite()">Abrir Invitación</button>
+<p>Has sido invitado a una celebración especial</p>
+<button onclick="startExperience()">Abrir Invitación</button>
 </div>
 
 <!-- HERO -->
 <div class="hero" id="hero">
-
 <div class="hero-content">
 
 <h2>Mi Bautizo</h2>
 <h1>Aisha Ailany</h1>
-
 <p>27 de Junio 2026 • 12:00 PM</p>
 
-<div class="glass">
+<div class="countdown">
 <div><span id="d">0</span>Días</div>
 <div><span id="h">0</span>Horas</div>
 <div><span id="m">0</span>Min</div>
@@ -230,7 +253,7 @@ Gálatas 3:27
 <section>
 <h2 class="title">Galería</h2>
 <div class="gallery">
-<img src="foto1.jpg">
+<img src="foto1.jpg" onclick="openImg(this.src)">
 <img src="foto2.jpg">
 <img src="foto3.jpg">
 <img src="foto4.jpg">
@@ -238,13 +261,18 @@ Gálatas 3:27
 </div>
 </section>
 
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="this.style.display='none'">
+<img id="lightboxImg">
+</div>
+
 <!-- IGLESIA -->
 <section>
-<h2 class="title">Ceremonia Religiosa</h2>
+<h2 class="title">Ceremonia</h2>
 <div class="card">
 <p><b>Parroquia San José Atlán</b></p>
 <p>Huichapan, Hidalgo</p>
-<a class="btn" href="https://maps.app.goo.gl/ruwVMsMTyJETJ2D48" target="_blank">Ver ubicación</a>
+<a class="btn" href="https://maps.app.goo.gl/ruwVMsMTyJETJ2D48" target="_blank">Cómo llegar</a>
 </div>
 </section>
 
@@ -271,19 +299,21 @@ Gálatas 3:27
 
 <script>
 
-function openInvite(){
-document.getElementById("envelope").style.display="none";
+/* START EXPERIENCE */
+function startExperience(){
+document.getElementById("overlay").style.display="none";
 document.getElementById("hero").style.display="flex";
 document.getElementById("musicBtn").style.display="block";
 document.getElementById("music").play();
-startPetals();
+startParticles();
 }
 
-const date = new Date("June 27, 2026 12:00:00").getTime();
+/* COUNTDOWN */
+const date=new Date("June 27, 2026 12:00:00").getTime();
 
 setInterval(()=>{
-let now = new Date().getTime();
-let d = date-now;
+let now=new Date().getTime();
+let d=date-now;
 
 document.getElementById("d").innerText=Math.floor(d/(1000*60*60*24));
 document.getElementById("h").innerText=Math.floor(d%(1000*60*60*24)/(1000*60*60));
@@ -296,11 +326,17 @@ const music=document.getElementById("music");
 const btn=document.getElementById("musicBtn");
 
 btn.onclick=()=>{
-music.paused ? music.play() : music.pause();
+music.paused?music.play():music.pause();
 };
 
-/* PETALS */
-function startPetals(){
+/* LIGHTBOX */
+function openImg(src){
+document.getElementById("lightbox").style.display="flex";
+document.getElementById("lightboxImg").src=src;
+}
+
+/* PARTICLES */
+function startParticles(){
 setInterval(()=>{
 let p=document.createElement("div");
 p.classList.add("petal");
@@ -309,7 +345,7 @@ p.style.left=Math.random()*100+"vw";
 p.style.animationDuration=(3+Math.random()*5)+"s";
 document.body.appendChild(p);
 setTimeout(()=>p.remove(),8000);
-},250);
+},200);
 }
 
 </script>
