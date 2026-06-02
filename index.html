@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bautizo Aisha Ailany</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+body{
+margin:0;
+font-family:'Cormorant Garamond', serif;
+background:#f5f0e6;
+color:#7a6a4f;
+overflow-x:hidden;
+}
+
+/* INTRO */
+.intro{
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+background:#f5f0e6;
+text-align:center;
+}
+
+.intro h1{
+font-family:'Great Vibes';
+font-size:4rem;
+color:#b79a5b;
+}
+
+.btn{
+padding:12px 25px;
+background:#b79a5b;
+color:white;
+border:none;
+border-radius:10px;
+font-size:16px;
+margin-top:20px;
+cursor:pointer;
+}
+
+/* HERO */
+.hero{
+display:none;
+height:100vh;
+background:url('foto-portada.jpg') center/cover no-repeat;
+align-items:center;
+justify-content:center;
+position:relative;
+text-align:center;
+}
+
+.hero::before{
+content:'';
+position:absolute;
+inset:0;
+background:rgba(255,255,255,0.4);
+}
+
+.hero-content{
+position:relative;
+z-index:2;
+animation:fadeIn 2s ease;
+}
+
+@keyframes fadeIn{
+from{opacity:0;transform:scale(1.1);}
+to{opacity:1;transform:scale(1);}
+}
+
+h1{
+font-family:'Great Vibes';
+font-size:4.5rem;
+color:#b79a5b;
+margin:0;
+}
+
+h2{
+color:#b79a5b;
+}
+
+/* COUNTDOWN */
+.countdown{
+display:flex;
+justify-content:center;
+gap:10px;
+flex-wrap:wrap;
+margin-top:15px;
+}
+
+.card{
+background:white;
+padding:10px;
+border-radius:12px;
+min-width:70px;
+box-shadow:0 10px 25px rgba(0,0,0,0.08);
+}
+
+.card span{
+display:block;
+font-size:1.6rem;
+color:#b79a5b;
+}
+
+/* SECTIONS */
+section{
+padding:60px 20px;
+text-align:center;
+}
+
+.title{
+font-family:'Great Vibes';
+font-size:3rem;
+color:#b79a5b;
+}
+
+/* GALLERY */
+.gallery{
+display:flex;
+overflow-x:auto;
+gap:12px;
+scroll-snap-type:x mandatory;
+padding:10px;
+}
+
+.gallery img{
+width:260px;
+height:340px;
+object-fit:cover;
+border-radius:15px;
+scroll-snap-align:center;
+}
+
+/* CARD */
+.card-box{
+background:white;
+padding:20px;
+border-radius:20px;
+box-shadow:0 10px 25px rgba(0,0,0,0.08);
+max-width:500px;
+margin:auto;
+}
+
+/* MUSIC */
+#musicBtn{
+position:fixed;
+bottom:20px;
+right:20px;
+background:#b79a5b;
+border:none;
+color:white;
+padding:15px;
+border-radius:50%;
+font-size:18px;
+display:none;
+}
+
+/* PETALS */
+.petal{
+position:fixed;
+top:-10px;
+color:#e7d3a8;
+font-size:18px;
+animation:fall linear infinite;
+}
+
+@keyframes fall{
+to{
+transform:translateY(110vh) rotate(360deg);
+}
+}
+</style>
+</head>
+
+<body>
+
+<!-- INTRO -->
+<div class="intro" id="intro">
+<h1>Aisha Ailany</h1>
+<p>Te invitamos a nuestro bautizo</p>
+<button class="btn" onclick="start()">Abrir Invitación</button>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="hero">
+
+<div class="hero-content">
+
+<h2>Mi Bautizo</h2>
+<h1>Aisha Ailany</h1>
+
+<p>27 de Junio 2026 - 12:00 PM</p>
+
+<div class="countdown">
+<div class="card"><span id="d">0</span>Días</div>
+<div class="card"><span id="h">0</span>Horas</div>
+<div class="card"><span id="m">0</span>Min</div>
+<div class="card"><span id="s">0</span>Seg</div>
+</div>
+
+</div>
+</div>
+
+<!-- FRASE -->
+<section>
+<h2 class="title">Con la bendición de Dios</h2>
+<p>“Porque todos los que han sido bautizados en Cristo, de Cristo están revestidos”<br><br>Gálatas 3:27</p>
+</section>
+
+<!-- GALERIA -->
+<section>
+<h2 class="title">Galería</h2>
+<div class="gallery">
+<img src="foto1.jpg">
+<img src="foto2.jpg">
+<img src="foto3.jpg">
+<img src="foto4.jpg">
+<img src="foto5.jpg">
+</div>
+</section>
+
+<!-- IGLESIA -->
+<section>
+<h2 class="title">Ceremonia</h2>
+<div class="card-box">
+<p><b>Parroquia San José Atlán</b></p>
+<p>Central, San José, Huichapan, Hgo.</p>
+<a class="btn" href="https://maps.app.goo.gl/ruwVMsMTyJETJ2D48" target="_blank">Ver ubicación</a>
+</div>
+</section>
+
+<!-- SALON -->
+<section>
+<h2 class="title">Recepción</h2>
+<div class="card-box">
+<p><b>El Saucillo</b></p>
+<p>Huichapan, Hidalgo</p>
+</div>
+</section>
+
+<!-- PADRES -->
+<section>
+<h2 class="title">Saul & Micaela</h2>
+</section>
+
+<!-- MUSICA -->
+<audio id="music" loop>
+<source src="musica.mp3" type="audio/mp3">
+</audio>
+
+<button id="musicBtn">🔊</button>
+
+<script>
+
+/* START EXPERIENCE */
+function start(){
+document.getElementById("intro").style.display="none";
+document.getElementById("hero").style.display="flex";
+document.getElementById("musicBtn").style.display="block";
+document.getElementById("music").play();
+startPetals();
+}
+
+/* COUNTDOWN */
+const date = new Date("June 27, 2026 12:00:00").getTime();
+
+setInterval(()=>{
+let now = new Date().getTime();
+let d = date-now;
+
+document.getElementById("d").innerText=Math.floor(d/(1000*60*60*24));
+document.getElementById("h").innerText=Math.floor(d%(1000*60*60*24)/(1000*60*60));
+document.getElementById("m").innerText=Math.floor(d%(1000*60*60)/(1000*60));
+document.getElementById("s").innerText=Math.floor(d%(1000*60)/1000);
+},1000);
+
+/* MUSIC */
+const music=document.getElementById("music");
+const btn=document.getElementById("musicBtn");
+
+btn.onclick=()=>{
+if(music.paused){
+music.play();
+btn.innerText="🔊";
+}else{
+music.pause();
+btn.innerText="🔈";
+}
+};
+
+/* PETALS */
+function startPetals(){
+setInterval(()=>{
+let petal=document.createElement("div");
+petal.classList.add("petal");
+petal.innerHTML="❀";
+petal.style.left=Math.random()*100+"vw";
+petal.style.animationDuration=(3+Math.random()*5)+"s";
+document.body.appendChild(petal);
+
+setTimeout(()=>petal.remove(),8000);
+},300);
+}
+
+</script>
+
+</body>
+</html>
