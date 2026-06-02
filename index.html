@@ -8,37 +8,39 @@
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
+
 body{
 margin:0;
 font-family:'Cormorant Garamond', serif;
 background:#f5f0e6;
-color:#7a6a4f;
 overflow-x:hidden;
+color:#7a6a4f;
 }
 
-/* INTRO */
-.intro{
-height:100vh;
+/* ✉️ ENVELOPE INTRO */
+.envelope{
+position:fixed;
+inset:0;
+background:#f5f0e6;
 display:flex;
+flex-direction:column;
 align-items:center;
 justify-content:center;
-flex-direction:column;
-background:#f5f0e6;
-text-align:center;
+z-index:999;
 }
 
-.intro h1{
+.envelope h1{
 font-family:'Great Vibes';
 font-size:4rem;
 color:#b79a5b;
 }
 
-.btn{
-padding:12px 25px;
+.openBtn{
+padding:14px 30px;
 background:#b79a5b;
 color:white;
 border:none;
-border-radius:10px;
+border-radius:12px;
 font-size:16px;
 margin-top:20px;
 cursor:pointer;
@@ -51,8 +53,8 @@ height:100vh;
 background:url('foto-portada.jpg') center/cover no-repeat;
 align-items:center;
 justify-content:center;
-position:relative;
 text-align:center;
+position:relative;
 }
 
 .hero::before{
@@ -65,43 +67,40 @@ background:rgba(255,255,255,0.4);
 .hero-content{
 position:relative;
 z-index:2;
-animation:fadeIn 2s ease;
+animation:zoomIn 2s ease;
 }
 
-@keyframes fadeIn{
-from{opacity:0;transform:scale(1.1);}
-to{opacity:1;transform:scale(1);}
+@keyframes zoomIn{
+from{transform:scale(1.1);opacity:0;}
+to{transform:scale(1);opacity:1;}
 }
 
 h1{
 font-family:'Great Vibes';
-font-size:4.5rem;
+font-size:5rem;
 color:#b79a5b;
 margin:0;
 }
 
-h2{
-color:#b79a5b;
-}
-
-/* COUNTDOWN */
-.countdown{
+/* GLASS COUNTDOWN */
+.glass{
 display:flex;
-justify-content:center;
 gap:10px;
+justify-content:center;
+margin-top:20px;
 flex-wrap:wrap;
-margin-top:15px;
 }
 
-.card{
-background:white;
-padding:10px;
-border-radius:12px;
+.glass div{
+backdrop-filter:blur(10px);
+background:rgba(255,255,255,0.6);
+padding:12px;
+border-radius:15px;
 min-width:70px;
-box-shadow:0 10px 25px rgba(0,0,0,0.08);
+box-shadow:0 10px 25px rgba(0,0,0,0.1);
 }
 
-.card span{
+.glass span{
 display:block;
 font-size:1.6rem;
 color:#b79a5b;
@@ -109,17 +108,18 @@ color:#b79a5b;
 
 /* SECTIONS */
 section{
-padding:60px 20px;
+padding:70px 20px;
 text-align:center;
 }
 
+/* TITLE */
 .title{
 font-family:'Great Vibes';
 font-size:3rem;
 color:#b79a5b;
 }
 
-/* GALLERY */
+/* GALLERY SWIPE */
 .gallery{
 display:flex;
 overflow-x:auto;
@@ -130,20 +130,45 @@ padding:10px;
 
 .gallery img{
 width:260px;
-height:340px;
+height:350px;
 object-fit:cover;
-border-radius:15px;
+border-radius:18px;
 scroll-snap-align:center;
 }
 
 /* CARD */
-.card-box{
+.card{
 background:white;
 padding:20px;
 border-radius:20px;
-box-shadow:0 10px 25px rgba(0,0,0,0.08);
 max-width:500px;
 margin:auto;
+box-shadow:0 15px 35px rgba(0,0,0,0.08);
+}
+
+/* BUTTONS */
+.btn{
+display:inline-block;
+margin-top:15px;
+padding:12px 25px;
+background:#b79a5b;
+color:white;
+border-radius:10px;
+text-decoration:none;
+}
+
+/* PETALS */
+.petal{
+position:fixed;
+top:-10px;
+color:#e7d3a8;
+animation:fall linear infinite;
+}
+
+@keyframes fall{
+to{
+transform:translateY(110vh) rotate(360deg);
+}
 }
 
 /* MUSIC */
@@ -156,34 +181,19 @@ border:none;
 color:white;
 padding:15px;
 border-radius:50%;
-font-size:18px;
 display:none;
 }
 
-/* PETALS */
-.petal{
-position:fixed;
-top:-10px;
-color:#e7d3a8;
-font-size:18px;
-animation:fall linear infinite;
-}
-
-@keyframes fall{
-to{
-transform:translateY(110vh) rotate(360deg);
-}
-}
 </style>
 </head>
 
 <body>
 
-<!-- INTRO -->
-<div class="intro" id="intro">
+<!-- ENVELOPE -->
+<div class="envelope" id="envelope">
 <h1>Aisha Ailany</h1>
-<p>Estas invitado a mi bautizo</p>
-<button class="btn" onclick="start()">Abrir Invitación</button>
+<p>Has sido invitado a su bautizo</p>
+<button class="openBtn" onclick="openInvite()">Abrir Invitación</button>
 </div>
 
 <!-- HERO -->
@@ -194,13 +204,13 @@ transform:translateY(110vh) rotate(360deg);
 <h2>Mi Bautizo</h2>
 <h1>Aisha Ailany</h1>
 
-<p>27 de Junio 2026 - 12:00 PM</p>
+<p>27 de Junio 2026 • 12:00 PM</p>
 
-<div class="countdown">
-<div class="card"><span id="d">0</span>Días</div>
-<div class="card"><span id="h">0</span>Horas</div>
-<div class="card"><span id="m">0</span>Min</div>
-<div class="card"><span id="s">0</span>Seg</div>
+<div class="glass">
+<div><span id="d">0</span>Días</div>
+<div><span id="h">0</span>Horas</div>
+<div><span id="m">0</span>Min</div>
+<div><span id="s">0</span>Seg</div>
 </div>
 
 </div>
@@ -209,7 +219,11 @@ transform:translateY(110vh) rotate(360deg);
 <!-- FRASE -->
 <section>
 <h2 class="title">Con la bendición de Dios</h2>
-<p>“Porque todos los que han sido bautizados en Cristo, de Cristo están revestidos”<br><br>Gálatas 3:27</p>
+<p>
+“Porque todos los que han sido bautizados en Cristo, de Cristo están revestidos”
+<br><br>
+Gálatas 3:27
+</p>
 </section>
 
 <!-- GALERIA -->
@@ -226,10 +240,10 @@ transform:translateY(110vh) rotate(360deg);
 
 <!-- IGLESIA -->
 <section>
-<h2 class="title">Ceremonia</h2>
-<div class="card-box">
+<h2 class="title">Ceremonia Religiosa</h2>
+<div class="card">
 <p><b>Parroquia San José Atlán</b></p>
-<p>Central, San José, Huichapan, Hgo.</p>
+<p>Huichapan, Hidalgo</p>
 <a class="btn" href="https://maps.app.goo.gl/ruwVMsMTyJETJ2D48" target="_blank">Ver ubicación</a>
 </div>
 </section>
@@ -237,7 +251,7 @@ transform:translateY(110vh) rotate(360deg);
 <!-- SALON -->
 <section>
 <h2 class="title">Recepción</h2>
-<div class="card-box">
+<div class="card">
 <p><b>El Saucillo</b></p>
 <p>Huichapan, Hidalgo</p>
 </div>
@@ -245,10 +259,10 @@ transform:translateY(110vh) rotate(360deg);
 
 <!-- PADRES -->
 <section>
-<h2 class="title">Saul & Micaela</h2>
+<h2 class="title">Saúl & Micaela</h2>
 </section>
 
-<!-- MUSICA -->
+<!-- MUSIC -->
 <audio id="music" loop>
 <source src="musica.mp3" type="audio/mp3">
 </audio>
@@ -257,16 +271,14 @@ transform:translateY(110vh) rotate(360deg);
 
 <script>
 
-/* START EXPERIENCE */
-function start(){
-document.getElementById("intro").style.display="none";
+function openInvite(){
+document.getElementById("envelope").style.display="none";
 document.getElementById("hero").style.display="flex";
 document.getElementById("musicBtn").style.display="block";
 document.getElementById("music").play();
 startPetals();
 }
 
-/* COUNTDOWN */
 const date = new Date("June 27, 2026 12:00:00").getTime();
 
 setInterval(()=>{
@@ -284,27 +296,20 @@ const music=document.getElementById("music");
 const btn=document.getElementById("musicBtn");
 
 btn.onclick=()=>{
-if(music.paused){
-music.play();
-btn.innerText="🔊";
-}else{
-music.pause();
-btn.innerText="🔈";
-}
+music.paused ? music.play() : music.pause();
 };
 
 /* PETALS */
 function startPetals(){
 setInterval(()=>{
-let petal=document.createElement("div");
-petal.classList.add("petal");
-petal.innerHTML="❀";
-petal.style.left=Math.random()*100+"vw";
-petal.style.animationDuration=(3+Math.random()*5)+"s";
-document.body.appendChild(petal);
-
-setTimeout(()=>petal.remove(),8000);
-},300);
+let p=document.createElement("div");
+p.classList.add("petal");
+p.innerHTML="❀";
+p.style.left=Math.random()*100+"vw";
+p.style.animationDuration=(3+Math.random()*5)+"s";
+document.body.appendChild(p);
+setTimeout(()=>p.remove(),8000);
+},250);
 }
 
 </script>
