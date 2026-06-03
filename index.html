@@ -170,7 +170,44 @@
         /* ===================================
            GALLERY
         =================================== */
-
+        .gallery {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            gap: 0;
+            padding: 40px 20px;
+            perspective: 1000px; /* clave para el 3D */
+        }
+        
+        .gallery img {
+            flex: 0 0 auto;
+            width: 280px;
+            height: 380px;
+            object-fit: cover;
+            border-radius: 22px;
+            scroll-snap-align: center;
+        
+            margin-left: -70px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+        
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            transform: rotateY(-6deg) rotateZ(-1deg);
+            position: relative;
+        }
+        
+        /* primera imagen sin encimarse tanto */
+        .gallery img:first-child {
+            margin-left: 0;
+        }
+        
+        /* efecto hover */
+        .gallery img:hover {
+            transform: rotateY(0deg) scale(1.05);
+            z-index: 10;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.35);
+        }
+        /*
         .gallery {
             display: flex;
             overflow-x: auto;
@@ -186,7 +223,7 @@
             border-radius: 18px;
             scroll-snap-align: center;
             cursor: pointer;
-        }
+        }*/
 
         /* ===================================
            LIGHTBOX
@@ -560,7 +597,7 @@
         <p><b>El Saucillo</b></p>
         <p>Huichapan, Hidalgo</p>
 
-        <iframe src="https://www.google.com/maps/embed?pb=!1m21!1m12!1m3!1d718.2927606277278!2d-99.70562620474466!3d20.311724441259006!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m6!3e0!4m0!4m3!3m2!1d20.311185502368637!2d-99.70576655374471!5e1!3m2!1ses-419!2smx!4v1780448901655!5m2!1ses-419!2smx" 
+        <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d935.4307810846801!2d-99.70562620474466!3d20.311724441259006!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses-419!2smx!4v1780449514744!5m2!1ses-419!2smx" 
             width="100%"
             height="320"
             style="border:0;border-radius:20px;"
@@ -587,9 +624,9 @@
 
         <div class="gallery">
             <img src="foto1.jpg" onclick="openImg(this.src)">
-            <img src="foto2.jpg">
-            <img src="foto3.jpg">
-            <img src="foto4.jpg">
+            <img src="foto2.jpg" onclick="openImg(this.src)">
+            <img src="foto3.jpg" onclick="openImg(this.src)">
+            <img src="foto4.jpg" onclick="openImg(this.src)">
         </div>
 
     </section>
@@ -639,6 +676,37 @@
 
             startParticles();
         }
+
+        /* ===================================
+           GALLERY
+        =================================== */
+
+        const gallery = document.querySelector(".gallery");
+        const images = document.querySelectorAll(".gallery img");
+        
+        function updateFocus() {
+            const center = gallery.scrollLeft + gallery.offsetWidth / 2;
+        
+            images.forEach(img => {
+                const imgCenter = img.offsetLeft + img.offsetWidth / 2;
+                const distance = Math.abs(center - imgCenter);
+        
+                const rotate = Math.min(distance / 30, 10); // límite de rotación
+        
+                img.style.transform = `
+                    perspective(1000px)
+                    rotateY(${imgCenter < center ? -rotate : rotate}deg)
+                    rotateZ(-1deg)
+                    scale(${distance < 120 ? 1.08 : 1})
+                `;
+            });
+        }
+        
+        gallery.addEventListener("scroll", () => {
+            requestAnimationFrame(updateFocus);
+        });
+        
+        updateFocus();
 
         /* ===================================
            COUNTDOWN
