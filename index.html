@@ -171,15 +171,53 @@
            GALLERY
         =================================== */
         
-        .gallery {
+       .gallery {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
             -webkit-overflow-scrolling: touch;
-            scroll-behavior: smooth;
             touch-action: pan-x;
+        
+            padding: 50px 20px;
+            gap: 0;
+        
+            perspective: 1200px;
+        }
+        
+        /* cada imagen es una “story card” */
+        .gallery img {
+            flex: 0 0 auto;
+            width: 280px;
+            height: 380px;
+            object-fit: cover;
+            border-radius: 24px;
+        
+            scroll-snap-align: center;
+        
+            margin-left: -90px;
+        
+            position: relative;
+            transform-origin: center;
+            will-change: transform;
+        
+            transition: transform 0.25s ease, filter 0.25s ease;
+        
+            box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+        
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        
+        .gallery img:first-child {
+            margin-left: 0;
+        }
+
+        .gallery {
+            scroll-behavior: smooth;
         }
         
         .gallery img {
-            transform: translateZ(0); /* fuerza GPU estable */
-            backface-visibility: hidden;
+            transform: translateZ(0);
         }
         
         /*
@@ -665,90 +703,68 @@
         const gallery = document.querySelector(".gallery");
         const images = Array.from(document.querySelectorAll(".gallery img"));
         
+        let ticking = false;
         let timeout;
         
+        function getCenter() {
+            return gallery.scrollLeft + gallery.offsetWidth / 2;
+        }
+        
+        /* 🔥 detectar imagen activa */
         function updateFocus() {
         
-            const center = gallery.scrollLeft + gallery.offsetWidth / 2;
+            const center = getCenter();
         
-            let closestIndex = 0;
-            let closestDistance = Infinity;
+            let activeIndex = 0;
+            let minDist = Infinity;
         
             images.forEach((img, i) => {
-        
                 const imgCenter = img.offsetLeft + img.offsetWidth / 2;
-                const distance = Math.abs(center - imgCenter);
+                const dist = Math.abs(center - imgCenter);
         
-                if (distance < closestDistance) {
-                    closestDistance = distance;
-                    closestIndex = i;
+                if (dist < minDist) {
+                    minDist = dist;
+                    activeIndex = i;
                 }
             });
         
             images.forEach((img, i) => {
         
                 const imgCenter = img.offsetLeft + img.offsetWidth / 2;
-                const distance = Math.abs(center - imgCenter);
+                const dist = Math.abs(center - imgCenter);
         
-                const rotate = Math.min(distance / 30, 12);
-                const isActive = i === closestIndex;
+                const rotate = Math.min(dist / 40, 10);
         
+                const isActive = i === activeIndex;
+        
+                /* 🔥 SOLO UNA ACTIVA (clave del sistema) */
                 img.style.zIndex = isActive ? 999 : 1;
         
                 img.style.transform = `
                     perspective(1200px)
                     rotateY(${imgCenter < center ? -rotate : rotate}deg)
-                    scale(${isActive ? 1.15 : 0.9})
+                    scale(${isActive ? 1.18 : 0.92})
                 `;
+        
+                /* 🔥 efecto Instagram real: blur leve en laterales */
+                img.style.filter = isActive ? "blur(0px)" : "blur(0.6px)";
+                img.style.opacity = isActive ? "1" : "0.85";
             });
         }
         
-        /* 🔥 FIX CLAVE PARA MÓVIL: esperar a que termine el swipe */
+        /* 🔥 optimización scroll */
         gallery.addEventListener("scroll", () => {
         
             clearTimeout(timeout);
         
             timeout = setTimeout(() => {
                 updateFocus();
-            }, 80); // cuando el scroll se estabiliza
+            }, 60); // cuando termina el swipe
         
         });
-
-        /* ===================================
-           COUNTDOWN
-        =================================== */
-
-        const date = new Date(
-            "June 27, 2026 12:00:00"
-        ).getTime();
-
-        setInterval(() => {
-
-            let now = new Date().getTime();
-            let d = date - now;
-
-            document.getElementById("d").innerText =
-                Math.floor(d / (1000 * 60 * 60 * 24));
-
-            document.getElementById("h").innerText =
-                Math.floor(
-                    d % (1000 * 60 * 60 * 24) /
-                    (1000 * 60 * 60)
-                );
-
-            document.getElementById("m").innerText =
-                Math.floor(
-                    d % (1000 * 60 * 60) /
-                    (1000 * 60)
-                );
-
-            document.getElementById("s").innerText =
-                Math.floor(
-                    d % (1000 * 60) /
-                    1000
-                );
-
-        }, 1000);
+        
+        /* init */
+        updateFocus();
 
         /* ===================================
            MUSIC
