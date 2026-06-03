@@ -179,7 +179,6 @@
             touch-action: pan-x;
         
             padding: 50px 20px;
-            gap: 0;
             perspective: 1200px;
         }
         
@@ -187,6 +186,7 @@
             flex: 0 0 auto;
             width: 220px;
             height: 320px;
+        
             object-fit: cover;
             border-radius: 22px;
         
@@ -196,15 +196,19 @@
         
             position: relative;
             transform-origin: center;
+        
             will-change: transform;
-        
-            transition: transform 0.15s linear, filter 0.15s linear;
-        
-            box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+            transition: transform 0.2s ease, filter 0.2s ease;
+            z-index: 1; /* base fija */
         }
         
         .gallery img:first-child {
             margin-left: 0;
+        }
+        
+        /* 🔥 SOLO la activa manda */
+        .gallery img.active {
+            z-index: 999 !important;
         }
         
         /*
@@ -712,33 +716,40 @@
         
         let timeout;
         
-        /* distancia normalizada (0 = centro, 1 = lejos) */
-        function getProgress(distance, max) {
-            return Math.min(distance / max, 1);
+        function getCenter() {
+            return gallery.scrollLeft + gallery.offsetWidth / 2;
         }
         
         function updateFocus() {
         
-            const center = gallery.scrollLeft + gallery.offsetWidth / 2;
+            const center = getCenter();
+        
+            let active = null;
+            let minDist = Infinity;
         
             images.forEach(img => {
         
                 const imgCenter = img.offsetLeft + img.offsetWidth / 2;
-                const distance = Math.abs(center - imgCenter);
+                const dist = Math.abs(center - imgCenter);
         
-                const progress = getProgress(distance, gallery.offsetWidth / 2);
+                if (dist < minDist) {
+                    minDist = dist;
+                    active = img;
+                }
+            });
         
-                /* ZOOM PROGRESIVO (curva suave) */
-                const scale = 1.2 - (progress * 0.35); // 1.2 → 0.85
+            images.forEach(img => {
         
-                /* ROTACIÓN suave */
-                const rotate = progress * 12;
+                const imgCenter = img.offsetLeft + img.offsetWidth / 2;
+                const dist = Math.abs(center - imgCenter);
         
-                /* BLUR DINÁMICO */
-                const blur = progress * 3; // hasta 3px
+                const progress = Math.min(dist / (gallery.offsetWidth / 2), 1);
         
-                /* OPACIDAD SUAVE */
-                const opacity = 1 - (progress * 0.35);
+                const scale = 1.2 - progress * 0.35;
+                const blur = progress * 3;
+                const rotate = progress * 10;
+        
+                img.classList.remove("active");
         
                 img.style.transform = `
                     perspective(1200px)
@@ -747,45 +758,25 @@
                 `;
         
                 img.style.filter = `blur(${blur}px)`;
-                img.style.opacity = opacity;
-                img.style.zIndex = Math.round((1 - progress) * 1000);
+                img.style.opacity = 1 - progress * 0.3;
             });
+        
+            // 🔥 SOLO UNA EN EL FRENTE (clave del fix)
+            if (active) {
+                active.classList.add("active");
+            }
         }
         
-        /* scroll optimizado */
+        /* 🔥 IMPORTANTE: actualizar cuando termina el swipe */
         gallery.addEventListener("scroll", () => {
         
             clearTimeout(timeout);
         
             requestAnimationFrame(updateFocus);
         
-            /* SNAP MAGNÉTICO al terminar swipe */
             timeout = setTimeout(() => {
-        
-                const center = gallery.scrollLeft + gallery.offsetWidth / 2;
-        
-                let closest = null;
-                let minDist = Infinity;
-        
-                images.forEach(img => {
-                    const imgCenter = img.offsetLeft + img.offsetWidth / 2;
-                    const dist = Math.abs(center - imgCenter);
-        
-                    if (dist < minDist) {
-                        minDist = dist;
-                        closest = img;
-                    }
-                });
-        
-                if (closest) {
-                    closest.scrollIntoView({
-                        behavior: "smooth",
-                        inline: "center",
-                        block: "nearest"
-                    });
-                }
-        
-            }, 120);
+                updateFocus();
+            }, 80);
         
         });
         
