@@ -170,6 +170,7 @@
         /* ===================================
            GALLERY
         =================================== */
+        
         .gallery {
             display: flex;
             overflow-x: auto;
@@ -180,7 +181,6 @@
             perspective: 1200px;
         }
         
-        /* IMPORTANTE: cada imagen debe tener su propio contexto */
         .gallery img {
             flex: 0 0 auto;
             width: 280px;
@@ -191,17 +191,19 @@
             margin-left: -80px;
             scroll-snap-align: center;
         
-            position: relative; /* clave */
+            position: relative;
             transform-origin: center;
             will-change: transform;
         
-            transition: transform 0.35s ease, z-index 0.2s ease;
+            transition: transform 0.35s ease, z-index 0s;
+        
             box-shadow: 0 25px 50px rgba(0,0,0,0.25);
         }
         
         .gallery img:first-child {
             margin-left: 0;
         }
+        
         /*
         .gallery {
             display: flex;
@@ -683,33 +685,44 @@
         =================================== */
 
         const gallery = document.querySelector(".gallery");
-        const images = document.querySelectorAll(".gallery img");
+        const images = Array.from(document.querySelectorAll(".gallery img"));
+        
+        function getCenterX() {
+            return gallery.scrollLeft + gallery.offsetWidth / 2;
+        }
         
         function updateFocus() {
-            const center = gallery.scrollLeft + gallery.offsetWidth / 2;
+            const center = getCenterX();
         
+            let closestIndex = 0;
+            let closestDistance = Infinity;
+        
+            // 🔥 1. detectar cuál está más cerca del centro
             images.forEach((img, i) => {
-        
                 const imgCenter = img.offsetLeft + img.offsetWidth / 2;
                 const distance = Math.abs(center - imgCenter);
         
-                const maxRotate = 12;
-                const rotate = Math.min(distance / 25, maxRotate);
-        
-                const isCenter = distance < 80;
-        
-                // 🔥 CLAVE REAL: reset primero
-                img.style.zIndex = "1";
-        
-                // 🔥 luego elevamos la del centro
-                if (isCenter) {
-                    img.style.zIndex = "999";
+                if (distance < closestDistance) {
+                    closestDistance = distance;
+                    closestIndex = i;
                 }
+            });
+        
+            // 🔥 2. aplicar estilos
+            images.forEach((img, i) => {
+                const imgCenter = img.offsetLeft + img.offsetWidth / 2;
+                const distance = Math.abs(center - imgCenter);
+        
+                const rotate = Math.min(distance / 30, 12);
+        
+                const isActive = i === closestIndex;
+        
+                img.style.zIndex = isActive ? 999 : 1;
         
                 img.style.transform = `
                     perspective(1200px)
                     rotateY(${imgCenter < center ? -rotate : rotate}deg)
-                    scale(${isCenter ? 1.15 : 0.92})
+                    scale(${isActive ? 1.15 : 0.9})
                 `;
             });
         }
