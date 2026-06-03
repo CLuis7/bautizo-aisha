@@ -175,37 +175,32 @@
             overflow-x: auto;
             scroll-snap-type: x mandatory;
             -webkit-overflow-scrolling: touch;
-            gap: 0;
             padding: 40px 20px;
-            perspective: 1000px; /* clave para el 3D */
+            gap: 0;
+            perspective: 1200px;
         }
         
+        /* IMPORTANTE: cada imagen debe tener su propio contexto */
         .gallery img {
             flex: 0 0 auto;
             width: 280px;
             height: 380px;
             object-fit: cover;
             border-radius: 22px;
+        
+            margin-left: -80px;
             scroll-snap-align: center;
         
-            margin-left: -70px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+            position: relative; /* clave */
+            transform-origin: center;
+            will-change: transform;
         
-            transition: transform 0.4s ease, box-shadow 0.4s ease;
-            transform: rotateY(-6deg) rotateZ(-1deg);
-            position: relative;
+            transition: transform 0.35s ease, z-index 0.2s ease;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.25);
         }
         
-        /* primera imagen sin encimarse tanto */
         .gallery img:first-child {
             margin-left: 0;
-        }
-        
-        /* efecto hover */
-        .gallery img:hover {
-            transform: rotateY(0deg) scale(1.05);
-            z-index: 10;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.35);
         }
         /*
         .gallery {
@@ -693,24 +688,29 @@
         function updateFocus() {
             const center = gallery.scrollLeft + gallery.offsetWidth / 2;
         
-            images.forEach(img => {
+            images.forEach((img, i) => {
+        
                 const imgCenter = img.offsetLeft + img.offsetWidth / 2;
                 const distance = Math.abs(center - imgCenter);
         
-                const rotate = Math.min(distance / 30, 10);
+                const maxRotate = 12;
+                const rotate = Math.min(distance / 25, maxRotate);
         
-                // 🔥 clave: más cerca del centro = más al frente
-                const z = Math.max(1, 100 - distance);
+                const isCenter = distance < 80;
+        
+                // 🔥 CLAVE REAL: reset primero
+                img.style.zIndex = "1";
+        
+                // 🔥 luego elevamos la del centro
+                if (isCenter) {
+                    img.style.zIndex = "999";
+                }
         
                 img.style.transform = `
-                    perspective(1000px)
+                    perspective(1200px)
                     rotateY(${imgCenter < center ? -rotate : rotate}deg)
-                    rotateZ(-1deg)
-                    scale(${distance < 120 ? 1.1 : 0.95})
+                    scale(${isCenter ? 1.15 : 0.92})
                 `;
-        
-                img.style.zIndex = Math.floor(z);
-                img.style.position = "relative";
             });
         }
         
