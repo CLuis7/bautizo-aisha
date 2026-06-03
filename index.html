@@ -384,6 +384,33 @@
             }
         }
 
+        /* ===== SEPARADOR FLORAL ===== */
+        section::after{
+            content:"❀";
+            display:block;
+            margin-top:40px;
+            color:#d4be8d;
+            font-size:28px;
+        }
+        
+        /* ===== ANIMACIÓN SECCIONES ===== */
+        section{
+            padding:80px 20px;
+            text-align:center;
+            animation:fadeUp 1s ease;
+        }
+        
+        @keyframes fadeUp{
+            from{
+                opacity:0;
+                transform:translateY(40px);
+            }
+            to{
+                opacity:1;
+                transform:translateY(0);
+            }
+        }
+
     </style>
 </head>
 
