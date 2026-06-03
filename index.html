@@ -172,36 +172,14 @@
         =================================== */
         
         .gallery {
-            display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
             -webkit-overflow-scrolling: touch;
-            padding: 40px 20px;
-            gap: 0;
-            perspective: 1200px;
+            scroll-behavior: smooth;
+            touch-action: pan-x;
         }
         
         .gallery img {
-            flex: 0 0 auto;
-            width: 280px;
-            height: 380px;
-            object-fit: cover;
-            border-radius: 22px;
-        
-            margin-left: -80px;
-            scroll-snap-align: center;
-        
-            position: relative;
-            transform-origin: center;
-            will-change: transform;
-        
-            transition: transform 0.35s ease, z-index 0s;
-        
-            box-shadow: 0 25px 50px rgba(0,0,0,0.25);
-        }
-        
-        .gallery img:first-child {
-            margin-left: 0;
+            transform: translateZ(0); /* fuerza GPU estable */
+            backface-visibility: hidden;
         }
         
         /*
@@ -687,18 +665,17 @@
         const gallery = document.querySelector(".gallery");
         const images = Array.from(document.querySelectorAll(".gallery img"));
         
-        function getCenterX() {
-            return gallery.scrollLeft + gallery.offsetWidth / 2;
-        }
+        let timeout;
         
         function updateFocus() {
-            const center = getCenterX();
+        
+            const center = gallery.scrollLeft + gallery.offsetWidth / 2;
         
             let closestIndex = 0;
             let closestDistance = Infinity;
         
-            // 🔥 1. detectar cuál está más cerca del centro
             images.forEach((img, i) => {
+        
                 const imgCenter = img.offsetLeft + img.offsetWidth / 2;
                 const distance = Math.abs(center - imgCenter);
         
@@ -708,13 +685,12 @@
                 }
             });
         
-            // 🔥 2. aplicar estilos
             images.forEach((img, i) => {
+        
                 const imgCenter = img.offsetLeft + img.offsetWidth / 2;
                 const distance = Math.abs(center - imgCenter);
         
                 const rotate = Math.min(distance / 30, 12);
-        
                 const isActive = i === closestIndex;
         
                 img.style.zIndex = isActive ? 999 : 1;
@@ -727,11 +703,16 @@
             });
         }
         
+        /* 🔥 FIX CLAVE PARA MÓVIL: esperar a que termine el swipe */
         gallery.addEventListener("scroll", () => {
-            requestAnimationFrame(updateFocus);
-        });
         
-        updateFocus();
+            clearTimeout(timeout);
+        
+            timeout = setTimeout(() => {
+                updateFocus();
+            }, 80); // cuando el scroll se estabiliza
+        
+        });
 
         /* ===================================
            COUNTDOWN
