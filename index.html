@@ -627,6 +627,12 @@
             <img src="foto2.jpg" onclick="openImg(this.src)">
             <img src="foto3.jpg" onclick="openImg(this.src)">
             <img src="foto4.jpg" onclick="openImg(this.src)">
+            <img src="foto5.jpg" onclick="openImg(this.src)">
+            <img src="foto6.jpg" onclick="openImg(this.src)">
+            <img src="foto7.jpg" onclick="openImg(this.src)">
+            <img src="foto8.jpg" onclick="openImg(this.src)">
+            <img src="foto9.jpg" onclick="openImg(this.src)">
+            <img src="foto10.jpg" onclick="openImg(this.src)">
         </div>
 
     </section>
@@ -691,14 +697,20 @@
                 const imgCenter = img.offsetLeft + img.offsetWidth / 2;
                 const distance = Math.abs(center - imgCenter);
         
-                const rotate = Math.min(distance / 30, 10); // límite de rotación
+                const rotate = Math.min(distance / 30, 10);
+        
+                // 🔥 clave: más cerca del centro = más al frente
+                const z = Math.max(1, 100 - distance);
         
                 img.style.transform = `
                     perspective(1000px)
                     rotateY(${imgCenter < center ? -rotate : rotate}deg)
                     rotateZ(-1deg)
-                    scale(${distance < 120 ? 1.08 : 1})
+                    scale(${distance < 120 ? 1.1 : 0.95})
                 `;
+        
+                img.style.zIndex = Math.floor(z);
+                img.style.position = "relative";
             });
         }
         
