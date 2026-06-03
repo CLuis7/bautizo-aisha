@@ -386,7 +386,18 @@
         }
         
         @media(max-width:768px){
+
+            .gallery {
+                padding: 30px 10px;
+            }
         
+            .gallery img {
+                width: 220px;
+                height: 300px;
+                margin-left: -60px;
+                border-radius: 20px;
+            }
+            
             .timeline::before{
                 left:25px;
             }
@@ -403,6 +414,15 @@
         
             .timeline-item::after{
                 left:16px !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            .gallery img {
+                width: 180px;
+                height: 260px;
+                margin-left: -45px;
             }
         }
 
@@ -736,6 +756,11 @@
                 const rotate = Math.min(dist / 40, 10);
         
                 const isActive = i === activeIndex;
+
+                 const isMobile = window.innerWidth < 768;
+                const scale = isActive
+                    ? (isMobile ? 1.08 : 1.18)
+                    : (isMobile ? 0.95 : 0.92);
         
                 /* 🔥 SOLO UNA ACTIVA (clave del sistema) */
                 img.style.zIndex = isActive ? 999 : 1;
@@ -743,7 +768,7 @@
                 img.style.transform = `
                     perspective(1200px)
                     rotateY(${imgCenter < center ? -rotate : rotate}deg)
-                    scale(${isActive ? 1.18 : 0.92})
+                    scale(${scale})
                 `;
         
                 /* 🔥 efecto Instagram real: blur leve en laterales */
