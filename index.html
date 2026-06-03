@@ -180,44 +180,31 @@
         
             padding: 50px 20px;
             gap: 0;
-        
             perspective: 1200px;
         }
         
-        /* cada imagen es una “story card” */
         .gallery img {
             flex: 0 0 auto;
-            width: 280px;
-            height: 380px;
+            width: 220px;
+            height: 320px;
             object-fit: cover;
-            border-radius: 24px;
+            border-radius: 22px;
         
             scroll-snap-align: center;
         
-            margin-left: -90px;
+            margin-left: -70px;
         
             position: relative;
             transform-origin: center;
             will-change: transform;
         
-            transition: transform 0.25s ease, filter 0.25s ease;
+            transition: transform 0.15s linear, filter 0.15s linear;
         
             box-shadow: 0 25px 60px rgba(0,0,0,0.25);
-        
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
         }
         
         .gallery img:first-child {
             margin-left: 0;
-        }
-
-        .gallery {
-            scroll-behavior: smooth;
-        }
-        
-        .gallery img {
-            transform: translateZ(0);
         }
         
         /*
@@ -723,47 +710,35 @@
         const gallery = document.querySelector(".gallery");
         const images = Array.from(document.querySelectorAll(".gallery img"));
         
-        let ticking = false;
         let timeout;
         
-        function getCenter() {
-            return gallery.scrollLeft + gallery.offsetWidth / 2;
+        /* distancia normalizada (0 = centro, 1 = lejos) */
+        function getProgress(distance, max) {
+            return Math.min(distance / max, 1);
         }
         
-        /* 🔥 detectar imagen activa */
         function updateFocus() {
         
-            const center = getCenter();
+            const center = gallery.scrollLeft + gallery.offsetWidth / 2;
         
-            let activeIndex = 0;
-            let minDist = Infinity;
-        
-            images.forEach((img, i) => {
-                const imgCenter = img.offsetLeft + img.offsetWidth / 2;
-                const dist = Math.abs(center - imgCenter);
-        
-                if (dist < minDist) {
-                    minDist = dist;
-                    activeIndex = i;
-                }
-            });
-        
-            images.forEach((img, i) => {
+            images.forEach(img => {
         
                 const imgCenter = img.offsetLeft + img.offsetWidth / 2;
-                const dist = Math.abs(center - imgCenter);
+                const distance = Math.abs(center - imgCenter);
         
-                const rotate = Math.min(dist / 40, 10);
+                const progress = getProgress(distance, gallery.offsetWidth / 2);
         
-                const isActive = i === activeIndex;
-
-                 const isMobile = window.innerWidth < 768;
-                const scale = isActive
-                    ? (isMobile ? 1.08 : 1.18)
-                    : (isMobile ? 0.95 : 0.92);
+                /* ZOOM PROGRESIVO (curva suave) */
+                const scale = 1.2 - (progress * 0.35); // 1.2 → 0.85
         
-                /* 🔥 SOLO UNA ACTIVA (clave del sistema) */
-                img.style.zIndex = isActive ? 999 : 1;
+                /* ROTACIÓN suave */
+                const rotate = progress * 12;
+        
+                /* BLUR DINÁMICO */
+                const blur = progress * 3; // hasta 3px
+        
+                /* OPACIDAD SUAVE */
+                const opacity = 1 - (progress * 0.35);
         
                 img.style.transform = `
                     perspective(1200px)
@@ -771,20 +746,46 @@
                     scale(${scale})
                 `;
         
-                /* 🔥 efecto Instagram real: blur leve en laterales */
-                img.style.filter = isActive ? "blur(0px)" : "blur(0.6px)";
-                img.style.opacity = isActive ? "1" : "0.85";
+                img.style.filter = `blur(${blur}px)`;
+                img.style.opacity = opacity;
+                img.style.zIndex = Math.round((1 - progress) * 1000);
             });
         }
         
-        /* 🔥 optimización scroll */
+        /* scroll optimizado */
         gallery.addEventListener("scroll", () => {
         
             clearTimeout(timeout);
         
+            requestAnimationFrame(updateFocus);
+        
+            /* SNAP MAGNÉTICO al terminar swipe */
             timeout = setTimeout(() => {
-                updateFocus();
-            }, 60); // cuando termina el swipe
+        
+                const center = gallery.scrollLeft + gallery.offsetWidth / 2;
+        
+                let closest = null;
+                let minDist = Infinity;
+        
+                images.forEach(img => {
+                    const imgCenter = img.offsetLeft + img.offsetWidth / 2;
+                    const dist = Math.abs(center - imgCenter);
+        
+                    if (dist < minDist) {
+                        minDist = dist;
+                        closest = img;
+                    }
+                });
+        
+                if (closest) {
+                    closest.scrollIntoView({
+                        behavior: "smooth",
+                        inline: "center",
+                        block: "nearest"
+                    });
+                }
+        
+            }, 120);
         
         });
         
